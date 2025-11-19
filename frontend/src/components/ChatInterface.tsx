@@ -29,6 +29,7 @@ export const ChatInterface: React.FC = () => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const currentConversation = getCurrentConversation();
+  const hasMessages = currentConversation && currentConversation.messages.length > 0;
 
   // Auto-scroll to bottom
   const scrollToBottom = () => {
@@ -144,23 +145,32 @@ export const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto">
-        {!currentConversation || currentConversation.messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mb-4">
-              <Bot size={32} className="text-white" />
+    <div className="flex flex-col h-full relative">
+      {!hasMessages ? (
+        /* EMPTY STATE - Centered */
+        <div className="flex-1 flex flex-col items-center justify-center px-4">
+          <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
+            <h1 className="text-4xl font-semibold text-gpt-light-text dark:text-gpt-dark-text mb-10 text-center">
+              What can I help you with?
+            </h1>
+
+            {/* Centered Input */}
+            <div className="w-full">
+              <ChatInput
+                onSend={handleSendMessage}
+                onStop={handleStopGeneration}
+                disabled={isLoading}
+                isStreaming={isStreaming}
+                placeholder="Message ChatGPT..."
+              />
             </div>
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-dark-text mb-2">
-              How can I help you today?
-            </h2>
-            <p className="text-gray-500 dark:text-gray-400 max-w-md">
-              Start a conversation by typing a message below. I'm powered by Google Gemini and ready to assist you!
-            </p>
           </div>
-        ) : (
-          <>
+        </div>
+      ) : (
+        /* CHAT STATE - Messages with bottom input */
+        <>
+          {/* Messages Area - Scrollable */}
+          <div className="flex-1 overflow-y-auto">
             {currentConversation.messages.map((message) => (
               <MessageBubble
                 key={message.id}
@@ -170,33 +180,42 @@ export const ChatInterface: React.FC = () => {
               />
             ))}
 
+            {/* Streaming Message */}
             {isStreaming && streamingText && (
-              <div className="bg-gray-50 dark:bg-dark-bg-light px-4 py-6">
-                <div className="max-w-3xl mx-auto flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-sm bg-green-500 flex items-center justify-center">
-                    <Bot size={20} className="text-white" />
+              <div className="w-full border-b border-black/10 dark:border-gray-900/50 bg-gpt-light-message dark:bg-gpt-dark-message">
+                <div className="max-w-3xl mx-auto px-4 py-6 md:px-6 flex gap-6">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center">
+                      <Bot size={18} className="text-white" />
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0 prose dark:prose-invert max-w-none text-gray-900 dark:text-dark-text">
-                    <p className="whitespace-pre-wrap">{streamingText}</p>
+                  <div className="flex-1 min-w-0 pt-0.5 text-gpt-light-text dark:text-gpt-dark-text">
+                    <p className="whitespace-pre-wrap leading-7">{streamingText}</p>
                   </div>
                 </div>
               </div>
             )}
 
+            {/* Typing Indicator */}
             {(isLoading || isStreaming) && !streamingText && <TypingIndicator />}
 
             <div ref={messagesEndRef} />
-          </>
-        )}
-      </div>
+          </div>
 
-      {/* Input Area */}
-      <ChatInput
-        onSend={handleSendMessage}
-        onStop={handleStopGeneration}
-        disabled={isLoading}
-        isStreaming={isStreaming}
-      />
+          {/* Input Area - Fixed at bottom */}
+          <div className="border-t border-gpt-light-border dark:border-gpt-dark-border bg-white dark:bg-gpt-dark-bg">
+            <div className="max-w-3xl mx-auto">
+              <ChatInput
+                onSend={handleSendMessage}
+                onStop={handleStopGeneration}
+                disabled={isLoading}
+                isStreaming={isStreaming}
+                placeholder="Message ChatGPT..."
+              />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

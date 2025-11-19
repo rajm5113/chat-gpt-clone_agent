@@ -8,20 +8,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        dark: {
-          bg: '#343541',
-          'bg-light': '#444654',
-          'bg-lighter': '#565869',
-          text: '#ECECF1',
-          'text-secondary': '#C5C5D2',
-        },
-        light: {
-          bg: '#FFFFFF',
-          'bg-light': '#F7F7F8',
-          'bg-lighter': '#ECECF1',
-          text: '#343541',
-          'text-secondary': '#565869',
-        },
+        // Exact ChatGPT colors
+        'gpt-dark-bg': '#343541',
+        'gpt-dark-sidebar': '#202123',
+        'gpt-dark-message': '#444654',
+        'gpt-dark-text': '#ECECF1',
+        'gpt-dark-text-secondary': '#C5C5D2',
+        'gpt-dark-border': '#565869',
+        'gpt-light-bg': '#FFFFFF',
+        'gpt-light-message': '#F7F7F8',
+        'gpt-light-text': '#343541',
+        'gpt-light-text-secondary': '#6E6E80',
+        'gpt-light-border': '#E5E5E5',
       },
     },
   },

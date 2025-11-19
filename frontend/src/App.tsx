@@ -18,7 +18,7 @@ function App() {
   }, [theme]);
 
   return (
-    <div className="flex h-screen bg-white dark:bg-dark-bg">
+    <div className="flex h-screen bg-gpt-light-bg dark:bg-gpt-dark-bg">
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 

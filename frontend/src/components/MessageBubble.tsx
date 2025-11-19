@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Copy, Check, Edit2, RotateCw, User, Bot } from 'lucide-react';
 import { MarkdownRenderer } from './MarkdownRenderer';
 import { Message } from '../types';
-import { copyToClipboard, formatMessageTime } from '../utils/helpers';
+import { copyToClipboard } from '../utils/helpers';
 
 interface MessageBubbleProps {
   message: Message;
@@ -45,49 +45,51 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   return (
     <div
-      className={`group relative px-4 py-6 ${
+      className={`group w-full border-b border-black/10 dark:border-gray-900/50 ${
         isUser
-          ? 'bg-white dark:bg-dark-bg'
-          : 'bg-gray-50 dark:bg-dark-bg-light'
+          ? 'bg-white dark:bg-gpt-dark-bg'
+          : 'bg-gpt-light-message dark:bg-gpt-dark-message'
       }`}
     >
-      <div className="max-w-3xl mx-auto flex gap-4">
-        {/* Avatar */}
-        <div
-          className={`flex-shrink-0 w-8 h-8 rounded-sm flex items-center justify-center ${
-            isUser
-              ? 'bg-blue-500'
-              : 'bg-green-500'
-          }`}
-        >
-          {isUser ? (
-            <User size={20} className="text-white" />
-          ) : (
-            <Bot size={20} className="text-white" />
-          )}
+      <div className="max-w-3xl mx-auto px-4 py-6 md:px-6 flex gap-6">
+        {/* Small circular avatar */}
+        <div className="flex-shrink-0">
+          <div
+            className={`w-8 h-8 rounded-full flex items-center justify-center ${
+              isUser
+                ? 'bg-blue-500'
+                : 'bg-green-600'
+            }`}
+          >
+            {isUser ? (
+              <User size={18} className="text-white" />
+            ) : (
+              <Bot size={18} className="text-white" />
+            )}
+          </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 pt-0.5">
           {isEditing ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
               <textarea
                 value={editedContent}
                 onChange={(e) => setEditedContent(e.target.value)}
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-dark-bg-lighter text-gray-900 dark:text-dark-text resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border border-gray-300 dark:border-gpt-dark-border rounded-md bg-white dark:bg-gpt-dark-bg text-gpt-light-text dark:text-gpt-dark-text resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                 rows={4}
                 autoFocus
               />
               <div className="flex gap-2">
                 <button
                   onClick={handleEditSave}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors"
+                  className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm font-medium transition-colors"
                 >
                   Save & Submit
                 </button>
                 <button
                   onClick={handleEditCancel}
-                  className="px-4 py-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 rounded-lg text-sm font-medium transition-colors"
+                  className="px-3 py-1.5 bg-transparent hover:bg-gray-100 dark:hover:bg-gpt-dark-border border border-gray-300 dark:border-gpt-dark-border text-gpt-light-text dark:text-gpt-dark-text rounded-md text-sm font-medium transition-colors"
                 >
                   Cancel
                 </button>
@@ -95,9 +97,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             </div>
           ) : (
             <>
-              <div className="prose dark:prose-invert max-w-none text-gray-900 dark:text-dark-text">
+              <div className="text-gpt-light-text dark:text-gpt-dark-text">
                 {isUser ? (
-                  <p className="whitespace-pre-wrap">{message.content}</p>
+                  <p className="whitespace-pre-wrap leading-7">{message.content}</p>
                 ) : (
                   <MarkdownRenderer content={message.content} />
                 )}
@@ -105,42 +107,38 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
               {/* Actions */}
               {showActions && (
-                <div className="flex items-center gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={handleCopy}
-                    className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-dark-bg-lighter transition-colors"
+                    className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     title="Copy message"
                   >
                     {copied ? (
                       <Check size={16} className="text-green-500" />
                     ) : (
-                      <Copy size={16} className="text-gray-500 dark:text-gray-400" />
+                      <Copy size={16} className="text-gpt-light-text-secondary dark:text-gpt-dark-text-secondary" />
                     )}
                   </button>
 
                   {isUser && onEdit && (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-dark-bg-lighter transition-colors"
+                      className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       title="Edit message"
                     >
-                      <Edit2 size={16} className="text-gray-500 dark:text-gray-400" />
+                      <Edit2 size={16} className="text-gpt-light-text-secondary dark:text-gpt-dark-text-secondary" />
                     </button>
                   )}
 
                   {!isUser && onRegenerate && (
                     <button
                       onClick={() => onRegenerate(message.id)}
-                      className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-dark-bg-lighter transition-colors"
+                      className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       title="Regenerate response"
                     >
-                      <RotateCw size={16} className="text-gray-500 dark:text-gray-400" />
+                      <RotateCw size={16} className="text-gpt-light-text-secondary dark:text-gpt-dark-text-secondary" />
                     </button>
                   )}
-
-                  <span className="text-xs text-gray-400 dark:text-gray-500 ml-2">
-                    {formatMessageTime(message.timestamp)}
-                  </span>
                 </div>
               )}
             </>
