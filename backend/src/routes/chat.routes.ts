@@ -5,7 +5,16 @@ import { GeminiService } from '../services/gemini.service';
 const router = Router();
 
 // Initialize services
-const geminiService = new GeminiService(process.env.GEMINI_API_KEY || '');
+const apiKey = process.env.GEMINI_API_KEY || '';
+
+if (!apiKey) {
+  console.error('❌ CRITICAL: GEMINI_API_KEY is empty in chat.routes.ts');
+  console.error('Environment variables may not be loaded yet!');
+} else {
+  console.log(`✅ Chat routes initializing with API key: ${apiKey.substring(0, 10)}...`);
+}
+
+const geminiService = new GeminiService(apiKey);
 const chatController = new ChatController(geminiService);
 
 // Routes

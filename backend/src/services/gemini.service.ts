@@ -6,8 +6,17 @@ export class GeminiService {
   private model: any;
 
   constructor(apiKey: string) {
+    if (!apiKey || apiKey.trim() === '') {
+      console.error('❌ CRITICAL: GeminiService initialized with empty API key!');
+      throw new Error('GEMINI_API_KEY is required but not provided');
+    }
+
+    console.log(`🔑 Initializing GeminiService with API key: ${apiKey.substring(0, 10)}...`);
+
     this.genAI = new GoogleGenerativeAI(apiKey);
     this.model = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
+
+    console.log('✅ GeminiService initialized successfully');
   }
 
   async generateResponse(message: string, conversationHistory: Message[] = []): Promise<string> {
